@@ -68,7 +68,13 @@ class _NewTransactionState extends State<NewTransaction> {
     return Card(
       elevation: 5,
       child: Container(
-        padding: EdgeInsets.all(10),
+        //попытка сделать элементы Modal sheet выше клавиатуры
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).size.height * 0.1,
+          right: 10,
+          left: 10,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+        ),
         child: Column(
           children: <Widget>[
             TextField(

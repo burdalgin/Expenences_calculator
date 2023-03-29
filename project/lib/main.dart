@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Transaction(
       id: 't1',
       title: 'Products',
-      amount: 202.1,
+      amount: 336.1,
       date: DateTime.utc(2023, 3, 23, 12, 00, 00),
     ),
     Transaction(
@@ -83,13 +83,13 @@ class _MyHomePageState extends State<MyHomePage> {
     Transaction(
       id: 't5',
       title: 'Products',
-      amount: 340.1,
+      amount: 1000.1,
       date: DateTime.now(),
     ),
     Transaction(
       id: 't4',
       title: 'Coffe',
-      amount: 130.1,
+      amount: 250.1,
       date: DateTime.utc(2023, 3, 25, 12, 00, 00),
     ),
     Transaction(
@@ -140,6 +140,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
+      //enableDrag: true,
+      isScrollControlled: true,
       context: ctx,
       builder: (_) {
         return GestureDetector(
@@ -170,15 +172,16 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  //void _filterCancel() {}
-
   @override
   Widget build(BuildContext context) {
-    final appBar = AppBar(
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+
+    final appBarWidget = AppBar(
       toolbarHeight: MediaQuery.of(context).orientation == Orientation.portrait
           ? (MediaQuery.of(context).size.height -
                   MediaQuery.of(context).padding.top) *
-              0.06
+              0.05
           : (MediaQuery.of(context).size.height -
                   MediaQuery.of(context).padding.top) *
               0.1,
@@ -189,19 +192,72 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.add))
       ],
     );
+//виджет для отображения листа транзаций с отклченным Chart (переменная виджета должна быть определена ниже переменных которые в нем испольуются, в данном случае переменная appBar)
+    final transactionsListWidgetChartDisabled = Container(
+      height: isLandscape
+          //если ориентация Portrait
+          ? (MediaQuery.of(context).size.height -
+                  appBarWidget.preferredSize.height -
+                  MediaQuery.of(context).padding.top) *
+              0.92
+          //если ориентация landscape
+          : (MediaQuery.of(context).size.height -
+                  appBarWidget.preferredSize.height -
+                  MediaQuery.of(context).padding.top) *
+              0.95,
+      child: _filerOn // если _filerOn = true - фильтруем список подставляя отфильтрованный список  _filteredTransactionList
+          ? TransactionList(
+              _filteredTransactionList,
+              _deleteTransaction,
+            )
+          // если _filerOn = false - используем основной лист транзаций  _userTransactions который не изменяется при фильтрации
+          : TransactionList(
+              _userTransactions,
+              _deleteTransaction,
+            ),
+    );
+
+    final transactionsListWidgetChartEnabled = Container(
+      height: isLandscape
+          //если ориентация Portrait
+          ? (MediaQuery.of(context).size.height -
+                  appBarWidget.preferredSize.height -
+                  MediaQuery.of(context).padding.top) *
+              0.72
+          //если ориентация landscape
+          : (MediaQuery.of(context).size.height -
+                  appBarWidget.preferredSize.height -
+                  MediaQuery.of(context).padding.top) *
+              0.52,
+      child: _filerOn // если _filerOn = true - фильтруем список подставляя отфильтрованный список  _filteredTransactionList
+          ? TransactionList(
+              _filteredTransactionList,
+              _deleteTransaction,
+            )
+          // если _filerOn = false - используем основной лист транзаций  _userTransactions который не изменяется при фильтрации
+          : TransactionList(
+              _userTransactions,
+              _deleteTransaction,
+            ),
+    );
 
     return Scaffold(
-      appBar: appBar, //назначаем атрибуту переменную содержащую целый выджет
+      appBar:
+          appBarWidget, //назначаем атрибуту переменную содержащую целый виджет
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Text('Show chart'),
-                  Switch(
-                    activeColor: Theme.of(context).primaryColor,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Text('Show chart'),
+                Container(
+                  height: isLandscape
+                      ? MediaQuery.of(context).size.height * 0.05
+                      : MediaQuery.of(context).size.height * 0.08,
+                  child: Switch(
+                    activeColor: Theme.of(context).colorScheme.secondary,
                     value: _showChart,
                     onChanged: (val) {
                       setState(() {
@@ -212,83 +268,61 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
                     },
                   ),
-                  Text('Transaction Filter'),
-                  Switch(
-                    activeColor: Theme.of(context).primaryColor,
+                ),
+                Text('Transaction Filter'),
+                Container(
+                  height: isLandscape
+                      ? MediaQuery.of(context).size.height * 0.05
+                      : MediaQuery.of(context).size.height * 0.08,
+                  child: Switch(
+                    activeColor: Theme.of(context).colorScheme.secondary,
                     value: _filerOn,
                     onChanged: (value) {
                       setState(() {
-                        _filerOn = false;
-                        // !! позволяет переключать Switch
+                        //
+                        _filerOn =
+                            false; // !! строка позволяет отключать Switch. По дефолту отключен и не дает включить, чтобы управлять включение только через аргумент метода фильтра в
                       });
                     },
-                  )
-                ]),
+                  ),
+                )
+              ],
+            ),
             _showChart
-                ? Column(children: <Widget>[
-                    Container(
-                      height: MediaQuery.of(context).orientation ==
-                              Orientation.portrait
-                          ? (MediaQuery.of(context).size.height -
-                                  //appBar.preferredSize.height -
-                                  MediaQuery.of(context).padding.top) *
-                              0.2
-                          : (MediaQuery.of(context).size.height -
-                                  //appBar.preferredSize.height -
-                                  MediaQuery.of(context).padding.top) *
-                              0.4,
-                      child: Chart(_recentTransactions, _filterTransaction),
-                    ),
-                    Container(
-                        height: MediaQuery.of(context).orientation ==
-                                Orientation.portrait
+                // если Chart включен
+                ? Column(
+                    children: <Widget>[
+                      Container(
+                        height: isLandscape
+                            //если ориентация Portrait
                             ? (MediaQuery.of(context).size.height -
-                                    //appBar.preferredSize.height -
+                                    appBarWidget.preferredSize.height -
                                     MediaQuery.of(context).padding.top) *
-                                0.7
+                                0.2
+                            //если ориентация landscape
                             : (MediaQuery.of(context).size.height -
-                                    //appBar.preferredSize.height -
+                                    appBarWidget.preferredSize.height -
                                     MediaQuery.of(context).padding.top) *
-                                0.5,
-                        child: _filerOn // если _filerOn = true - фильтруем список подставляя отфильтрованный список  _filteredTransactionList
-                            ? TransactionList(
-                                _filteredTransactionList,
-                                _deleteTransaction,
-                              )
-                            // если _filerOn = false - используем основной лист транзаций  _userTransactions который не изменяется при фильтрации
-                            : TransactionList(
-                                _userTransactions,
-                                _deleteTransaction,
-                              )),
-                  ])
-                : Container(
-                    height: MediaQuery.of(context).orientation ==
-                            Orientation.portrait
-                        ? (MediaQuery.of(context).size.height -
-                                //appBar.preferredSize.height -
-                                MediaQuery.of(context).padding.top) *
-                            0.7
-                        : (MediaQuery.of(context).size.height -
-                                //appBar.preferredSize.height -
-                                MediaQuery.of(context).padding.top) *
-                            0.5,
-                    child: _filerOn // если _filerOn = true - фильтруем список подставляя отфильтрованный список  _filteredTransactionList
-                        ? TransactionList(
-                            _filteredTransactionList,
-                            _deleteTransaction,
-                          )
-                        // если _filerOn = false - используем основной лист транзаций  _userTransactions который не изменяется при фильтрации
-                        : TransactionList(
-                            _userTransactions,
-                            _deleteTransaction,
-                          )),
+                                0.4,
+                        child: Chart(_recentTransactions, _filterTransaction),
+                      ),
+                      //показываем лист транзаций с размерами в соответствии с включенным Chart
+                      transactionsListWidgetChartEnabled
+                    ],
+                  )
+                // если Chart выключен
+                //показываем лист транзаций с размерами в соответствии с Выключенным Chart
+                : transactionsListWidgetChartDisabled
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        hoverColor: Colors.green,
-        onPressed: () => _startAddNewTransaction(context),
+      floatingActionButton: Container(
+        //alignment: Alignment.bottomCenter, // по дефолту снизу-справа
+        child: FloatingActionButton(
+          child: Icon(Icons.add),
+          hoverColor: Colors.green,
+          onPressed: () => _startAddNewTransaction(context),
+        ),
       ),
     );
   }
