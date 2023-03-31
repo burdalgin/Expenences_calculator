@@ -5,9 +5,10 @@ import './chart_bar.dart';
 
 class Chart extends StatelessWidget {
   final List<Transaction> recentTransactions;
-  final Function _filtrCallBack;
+  final Function filtrCallBack;
+  final filterDisablevalue;
 
-  Chart(this.recentTransactions, this._filtrCallBack);
+  Chart(this.recentTransactions, this.filtrCallBack, this.filterDisablevalue);
 
   List<Map<String, Object>> get groupedTransactionsValues {
     return List.generate(7, (index) {
@@ -53,7 +54,8 @@ class Chart extends StatelessWidget {
                   totalSpending == 0.0
                       ? 0.0
                       : (keys['amount'] as double) / totalSpending,
-                  _filtrCallBack,
+                  filtrCallBack,
+                  filterDisablevalue,
                 ),
               );
             }).toList()),
@@ -61,40 +63,3 @@ class Chart extends StatelessWidget {
     );
   }
 }
-
-/*class Chart extends StatelessWidget {
-  final List<Transaction> transactions;
-  Chart(this.transactions);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: ListView.builder(
-          itemCount: transactions.length,
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) {
-            return ChartBar(transactions);
-
-            /*Card(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: Icon(Icons.monetization_on_outlined),
-                  ),
-                  SizedBox(
-                    height: 50,
-                    width: 30,
-                  ),
-                  Container(
-                    child: Text(transactions[index].amount.round().toString()),
-                  ),
-                ],
-              ),
-            );*/
-          }),
-    );
-  }
-}
-*/

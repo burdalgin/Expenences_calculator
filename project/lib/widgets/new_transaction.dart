@@ -1,5 +1,8 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import './adaptive_button.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTx;
@@ -65,15 +68,18 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(
+        context); //назначаем переменную для быстрого доступа к MediaQuery.of(context)
+
     return Card(
       elevation: 5,
       child: Container(
-        //попытка сделать элементы Modal sheet выше клавиатуры
+        //ПОПЫТКА сделать элементы Modal sheet выше клавиатуры. Высоту не получается сделать только Margin элементов
         padding: EdgeInsets.only(
-          top: MediaQuery.of(context).size.height * 0.1,
+          top: mediaQuery.size.height * 0.1,
           right: 10,
           left: 10,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+          bottom: mediaQuery.viewInsets.bottom + 10,
         ),
         child: Column(
           children: <Widget>[
@@ -81,14 +87,14 @@ class _NewTransactionState extends State<NewTransaction> {
               decoration: InputDecoration(labelText: 'Title'),
               controller:
                   _titleComtroller, // == onChanged: (val) => amountInput = val,
-              onSubmitted: (_) => _submitData(),
+              onSubmitted: (value) => _submitData(),
             ),
             TextField(
               decoration: InputDecoration(labelText: 'Amount'),
               controller:
                   _amountController, // == onChanged: (val) {titleInput = val;},
               keyboardType: TextInputType.number,
-              onSubmitted: (_) =>
+              onSubmitted: (value) =>
                   _submitData(), //почему бля с (_) тут? если сделать submitData() то дублирует запись когда нажимаешь галочку клаве а потом кнопку Submit (можно с () только если использовать Navigator.of(context).pop(); )
             ),
             Column(
@@ -100,13 +106,7 @@ class _NewTransactionState extends State<NewTransaction> {
                       ? 'Current date will be choosen or choose the date'
                       : DateFormat.yMd().format(_selectedDate)),
                 ),
-                TextButton(
-                  onPressed: _presentDatePicker,
-                  child: Text(
-                    'Chose the date',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                )
+                AdaptiveTextButton('Chose the date', _presentDatePicker)
               ],
             ),
             ElevatedButton(

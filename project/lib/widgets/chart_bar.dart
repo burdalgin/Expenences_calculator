@@ -5,24 +5,18 @@ class ChartBar extends StatefulWidget {
   final double spendamount;
   final double spendingPctOTotal;
   final Function _filterCallBack;
+  bool filterdisabled;
 
-  ChartBar(
-    this.label,
-    this.spendamount,
-    this.spendingPctOTotal,
-    this._filterCallBack,
-  );
+  ChartBar(this.label, this.spendamount, this.spendingPctOTotal,
+      this._filterCallBack, this.filterdisabled);
 
   @override
   State<ChartBar> createState() => _ChartBarState();
 }
 
-bool selectedFilterelement = false;
+String activeElement;
 
 class _ChartBarState extends State<ChartBar> {
-  ////////// VARs //////////////////////////
-  //bool filterButtonOnpressed = false;
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (ctx, constraints) {
@@ -80,10 +74,13 @@ class _ChartBarState extends State<ChartBar> {
                   TextButton(
                     onPressed: () {
                       widget._filterCallBack(widget.label);
+                      activeElement =
+                          widget.label; //определяем активный элемент
 
                       setState(() {});
                     },
-                    child: selectedFilterelement
+                    child: activeElement == widget.label &&
+                            widget.filterdisabled != true //
                         ? Text(widget.label,
                             style: TextStyle(fontWeight: FontWeight.bold))
                         : Text(widget.label,
@@ -96,11 +93,6 @@ class _ChartBarState extends State<ChartBar> {
     });
   }
 }
-
-
-
-
-
 
 /*
 
