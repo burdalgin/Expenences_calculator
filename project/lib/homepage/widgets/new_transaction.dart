@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import './adaptive_button.dart';
@@ -7,7 +5,9 @@ import './adaptive_button.dart';
 class NewTransaction extends StatefulWidget {
   final Function addTx;
 
-  NewTransaction(this.addTx);
+  NewTransaction(this.addTx) {
+    print('Conctructor NewTransaction');
+  }
 
   @override
   State<NewTransaction> createState() => _NewTransactionState();
@@ -68,6 +68,7 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
+    print('_NewTransactionState Widget build(BuildContext context)');
     final mediaQuery = MediaQuery.of(
         context); //назначаем переменную для быстрого доступа к MediaQuery.of(context)
 
@@ -115,7 +116,7 @@ class _NewTransactionState extends State<NewTransaction> {
               ),
               onPressed:
                   _submitData, // а тут бля без (_) ? если сделать submitData() то дублирует запись когда нажимаешь галочку клаве а потом кнопку Submit (можно с () только если использовать Navigator.of(context).pop();, modal сам сворачивается если выполнен onSubmit или OnPress )
-              child: Text('Add Transaction'),
+              child: const Text('Add Transaction'),
             ),
           ],
         ),

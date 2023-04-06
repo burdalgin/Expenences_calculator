@@ -5,10 +5,13 @@ class ChartBar extends StatefulWidget {
   final double spendamount;
   final double spendingPctOTotal;
   final Function _filterCallBack;
-  bool filterdisabled;
+  final bool filterdisabled;
 
   ChartBar(this.label, this.spendamount, this.spendingPctOTotal,
-      this._filterCallBack, this.filterdisabled);
+      this._filterCallBack, this.filterdisabled) {
+    print(
+        'Conctructor ChartBar'); //если ставить const перед конструктором - нельзя испольховать {...} в теле констуктора
+  }
 
   @override
   State<ChartBar> createState() => _ChartBarState();
@@ -19,6 +22,7 @@ String activeElement;
 class _ChartBarState extends State<ChartBar> {
   @override
   Widget build(BuildContext context) {
+    print('ChartBar Widget build(BuildContext context) ');
     return LayoutBuilder(builder: (ctx, constraints) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -52,14 +56,24 @@ class _ChartBarState extends State<ChartBar> {
                 ),
                 FractionallySizedBox(
                   heightFactor: widget.spendingPctOTotal,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(5),
-                          topRight: Radius.circular(5)),
-                    ),
-                  ),
+                  child: activeElement == widget.label &&
+                          widget.filterdisabled != true
+                      ? Container(
+                          decoration: BoxDecoration(
+                            color: Colors.amber,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(5),
+                                topRight: Radius.circular(5)),
+                          ),
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(5),
+                                topRight: Radius.circular(5)),
+                          ),
+                        ),
                 ),
               ],
             ),
@@ -82,7 +96,9 @@ class _ChartBarState extends State<ChartBar> {
                     child: activeElement == widget.label &&
                             widget.filterdisabled != true //
                         ? Text(widget.label,
-                            style: TextStyle(fontWeight: FontWeight.bold))
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.amber))
                         : Text(widget.label,
                             style: TextStyle(fontWeight: FontWeight.normal)),
                   ),
@@ -93,37 +109,3 @@ class _ChartBarState extends State<ChartBar> {
     });
   }
 }
-
-/*
-
-class ChartBar extends StatefulWidget {
-  
-  @override
-  State<ChartBar> createState() => _ChartBarState();
-}
-
-class _ChartBarState extends State<ChartBar> {
- 
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            child: Icon(Icons.monetization_on_outlined),
-          ),
-          SizedBox(
-            height: 50,
-            width: 30,
-          ),
-          Container(
-            child: Text(widget.transactions[index].amount.toString()),
-          ),
-        ],
-      ),
-    );
-  }
-}
-*/

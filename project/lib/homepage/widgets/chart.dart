@@ -8,7 +8,10 @@ class Chart extends StatelessWidget {
   final Function filtrCallBack;
   final filterDisablevalue;
 
-  Chart(this.recentTransactions, this.filtrCallBack, this.filterDisablevalue);
+  Chart(this.recentTransactions, this.filtrCallBack, this.filterDisablevalue) {
+    print(
+        'Conctructor Chart'); //если ставить const перед конструктором - нельзя испольховать {...} в теле констуктора
+  }
 
   List<Map<String, Object>> get groupedTransactionsValues {
     return List.generate(7, (index) {
@@ -38,6 +41,7 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Chart Widget build(BuildContext context) ');
     return Card(
       elevation: 5,
       margin: EdgeInsets.all(5),
